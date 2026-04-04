@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
  *  Freesm Launcher - Minecraft Launcher
- *  Copyright (C) 2025 so5iso4ka <so5iso4ka@icloud.com>
+ *  Copyright (C) 2026 so5iso4ka <so5iso4ka@icloud.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,46 +18,38 @@
 
 #pragma once
 
-#include "BuildConfig.h"
-#include "minecraft/auth/AuthFlow.h"
+#include <QByteArray>
+#include <QJsonObject>
+#include <QString>
+#include <memory>
+
 #include "minecraft/auth/AuthStep.h"
 #include "net/NetJob.h"
 #include "net/Upload.h"
+
+struct AccountData;
 
 class CustomAuthStep : public AuthStep {
     Q_OBJECT
 
    public:
-    CustomAuthStep(AccountData* data, AuthFlow::Action action, QString password);
-    virtual ~CustomAuthStep() noexcept = default;
+    CustomAuthStep(AccountData* data, QString password);
+    ~CustomAuthStep() override;
 
     void perform() override;
 
     QString describe() override { return tr("Custom account authentication"); }
 
-   protected:
-    virtual QString authType() { return "Custom"; }
+   private:
+    QJsonObject fillRequest() const;
 
-    virtual QString authUrl() { return m_data->authUrl; }
-
-    virtual QString clientID() { return BuildConfig.LAUNCHER_NAME; }
-
-    virtual QString requestUrl();
-
-    QString requestTemplate();
-
-    QString fillRequest();
-
-    bool parseResponse();
-
-   protected slots:
+   private slots:
     virtual void onRequestDone();
 
-   protected:
+   private:
     std::shared_ptr<QByteArray> m_response;
     Net::Upload::Ptr m_request;
     NetJob::Ptr m_task;
 
-    const QString m_password;
-    const AuthFlow::Action m_action;
+    QString m_password;
 };
