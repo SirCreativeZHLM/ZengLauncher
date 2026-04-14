@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /*
  *  Freesm Launcher - Minecraft Launcher
- *  Copyright (C) 2025 so5iso4ka <so5iso4ka@icloud.com>
+ *  Copyright (C) 2026 so5iso4ka <so5iso4ka@icloud.com>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,109 +18,105 @@
 
 #include "CustomAuthStep.h"
 
+#include <QDateTime>
 #include <QInputDialog>
+#include <QJsonDocument>
+#include <utility>
 
 #include "Application.h"
 #include "Logging.h"
 #include "net/NetUtils.h"
 #include "net/RawHeaderProxy.h"
 
-#include <utility>
+CustomAuthStep::CustomAuthStep(AccountData* data, QString password) : AuthStep(data), m_password(std::move(password)) {}
 
-CustomAuthStep::CustomAuthStep(AccountData* data, AuthFlow::Action action, QString password)
-    : AuthStep(data), m_password(std::move(password)), m_action(action)
-{}
+CustomAuthStep::~CustomAuthStep() = default;
 
 void CustomAuthStep::perform()
 {
-    const QUrl url(authUrl() + requestUrl());
-    const QString requestData = fillRequest();
+    if (m_data == nullptr) {
+        emit finished(AccountTaskState::STATE_FAILED_SOFT, tr("Account data is a null pointer"));
+        return;
+    }
 
-    m_response.reset(new QByteArray());
-    m_request = Net::Upload::makeByteArray(url, m_response, requestData.toUtf8());
+    const QUrl url(m_data->authUrl + m_data->loginUrl);
+    const QJsonDocument request(fillRequest());
 
-    const auto headerProxy =
-        new Net::RawHeaderProxy(QList<Net::HeaderPair>{ { "Content-Type", "application/json" }, { "Accept", "application/json" } });
-    m_request->addHeaderProxy(headerProxy);
+    m_response = std::make_shared<QByteArray>();
+    m_request = Net::Upload::makeByteArray(url, m_response, request.toJson());
+
     // RawHeaderProxy::addHeaderProxy takes ownership of the proxy, so no cleanup is required
+    m_request->addHeaderProxy(new Net::RawHeaderProxy(
+        QList<Net::HeaderPair>{ { "Content-Type", "application/json; charset=utf-8" }, { "Accept", "application/json" } }));
 
-    m_task.reset(new NetJob(authType() + "AuthStep", APPLICATION->network()));
+    m_task.reset(new NetJob("CustomAuthStep", APPLICATION->network()));
     m_task->setAskRetry(false);
     m_task->addNetAction(m_request);
 
     connect(m_task.get(), &Task::finished, this, &CustomAuthStep::onRequestDone);
 
     m_task->start();
-    qDebug() << "Getting authorization token for " + authType() + " account";
+    qDebug() << "Getting authorization token for custom account";
 }
 
-QString CustomAuthStep::requestUrl()
+QJsonObject CustomAuthStep::fillRequest() const
 {
-    return m_action == AuthFlow::Action::Login ? m_data->loginUrl : m_data->refreshUrl;
+    QJsonObject root;
+    root.insert("username", m_data->accountLogin);
+    root.insert("password", m_password);
+
+    QJsonObject agent;
+    agent.insert("name", "Minecraft");
+    agent.insert("version", 1);
+
+    root.insert("agent", agent);
+
+    return root;
 }
 
-QString CustomAuthStep::requestTemplate()
-{
-    if (m_action == AuthFlow::Action::Login) {
-        return R"XXX(
-{
-    "username": "%1",
-    "password": "%2",
-    "clientToken": "%3",
-    "requestUser": false,
-    "agent": {
-	"name":"Minecraft",
-	"version":1
-    }
-}
-)XXX";
-    } else {
-        return R"XXX(
-{
-    "accessToken": "%1",
-    "clientToken": "%2",
-    "requestUser": false,
-    "selectedProfile": {
-        "id": "%3",
-        "name": "%4"
-    }
-}
-)XXX";
-    }
-}
-
-QString CustomAuthStep::fillRequest()
-{
-    if (m_action == AuthFlow::Action::Login) {
-        return requestTemplate().arg(m_data->accountLogin, m_password, clientID());
-    } else {
-        return requestTemplate().arg(m_data->yggdrasilToken.token, m_data->clientID, m_data->minecraftProfile.id,
-                                     m_data->minecraftProfile.name);
-    }
-}
-
-bool CustomAuthStep::parseResponse()
+void CustomAuthStep::onRequestDone()
 {
     qCDebug(authCredentials()) << *m_response;
-    if (m_request->error() != QNetworkReply::NoError) {
-        qWarning() << "Reply error:" << m_request->error();
-        return false;
+
+    if (m_request->error() != QNetworkReply::NoError && m_request->error() != QNetworkReply::ContentAccessDenied) {
+        emit finished(AccountTaskState::STATE_OFFLINE, m_request->errorString());
+        return;
     }
 
-    auto jsonResponse = QJsonDocument::fromJson(*m_response);
+    QJsonParseError err;
+    auto jsonResponse = QJsonDocument::fromJson(*m_response, &err);
+
+    if (err.error != QJsonParseError::NoError) {
+        emit finished(AccountTaskState::STATE_FAILED_SOFT, tr("Error while parsing JSON response: %1").arg(err.errorString()));
+        return;
+    }
+
+    if (m_request->error() == QNetworkReply::ContentAccessDenied) {
+        const QString msg = jsonResponse["errorMessage"].toString() == "Invalid credentials. Invalid username or password."
+                                ? tr("Invalid credentials. Invalid username or password.")
+                                : m_request->errorString();
+
+        emit finished(AccountTaskState::STATE_FAILED_HARD, msg);
+        return;
+    }
 
     m_data->yggdrasilToken.token = jsonResponse["accessToken"].toString();
+    m_data->yggdrasilToken.validity = Validity::Certain;
+    m_data->yggdrasilToken.issueInstant = QDateTime::currentDateTimeUtc();
 
     m_data->clientID = jsonResponse["clientToken"].toString();
 
-    if (!jsonResponse["selectedProfile"].isNull()) {
-        auto profile = jsonResponse["selectedProfile"].toObject();
-        m_data->minecraftProfile.id = profile["id"].toString();
-        m_data->minecraftProfile.name = profile["name"].toString();
+    QJsonObject selectedProfile = jsonResponse["selectedProfile"].toObject();
+    if (!selectedProfile.isEmpty()) {
+        m_data->minecraftProfile.id = selectedProfile["id"].toString();
+        m_data->minecraftProfile.name = selectedProfile["name"].toString();
+
+        emit finished(AccountTaskState::STATE_WORKING, tr("Got authorization for custom account"));
+        return;
     }
 
     const QJsonArray profiles = jsonResponse["availableProfiles"].toArray();
-    if (profiles.size() > 1 && m_data->minecraftProfile.id.isEmpty()) {
+    if (profiles.size() > 1) {
         const auto profileName = [](const auto& profile) {
             auto obj = profile.toObject();
             return obj["name"].toString();
@@ -134,7 +130,8 @@ bool CustomAuthStep::parseResponse()
             QInputDialog::getItem(nullptr, tr("Select profile"), tr("Select profile for this account"), list, 0, false, &ok);
 
         if (!ok) {
-            return false;
+            emit finished(AccountTaskState::STATE_FAILED_SOFT, tr("Profile selection cancelled"));
+            return;
         }
 
         const auto it = std::ranges::find(profiles, selectedProfileName, profileName);
@@ -142,24 +139,16 @@ bool CustomAuthStep::parseResponse()
             auto profileObj = it->toObject();
             m_data->minecraftProfile = MinecraftProfile{ .id = profileObj["id"].toString(), .name = profileObj["name"].toString() };
         } else {
-            return false;
+            // assuming that this will never happen
+            emit finished(AccountTaskState::STATE_FAILED_SOFT, tr("Something went wrong"));
+            return;
         }
-    }
-
-    if (profiles.size() == 1 && m_data->minecraftProfile.id.isEmpty()) {
+    } else if (profiles.size() == 1) {
         auto profileObj = profiles.first().toObject();
         m_data->minecraftProfile = MinecraftProfile{ .id = profileObj["id"].toString(), .name = profileObj["name"].toString() };
     }
 
-    return true;
-}
+    m_data->profileSelectedExplicitly = true;
 
-void CustomAuthStep::onRequestDone()
-{
-    if (!parseResponse()) {
-        emit finished(AccountTaskState::STATE_OFFLINE,
-                      tr("Failed to get authorization for %1 account: %2").arg(authType(), m_request->errorString()));
-        return;
-    }
-    emit finished(AccountTaskState::STATE_WORKING, tr("Got authorization for %1 account").arg(authType()));
+    emit finished(AccountTaskState::STATE_WORKING, tr("Got authorization for custom account"));
 }
