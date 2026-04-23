@@ -18,29 +18,17 @@
 
 #pragma once
 
-#include <launch/LaunchStep.h>
-#include <minecraft/auth/MinecraftAccount.h>
-#include "minecraft/MinecraftInstance.h"
-#include "net/Download.h"
-#include "net/NetJob.h"
+#include "ApplyLibraryOverride.h"
 
-class ApplyAuthlibInjector : public LaunchStep {
+class ApplyAuthlibInjector : public ApplyLibraryOverride {
     Q_OBJECT
    public:
-    explicit ApplyAuthlibInjector(LaunchTask* parent, AuthSessionPtr session);
-    ~ApplyAuthlibInjector() override = default;
-
-    bool canAbort() const override { return false; }
+    explicit ApplyAuthlibInjector(LaunchTask* parent, RuntimeContext& ctx, Net::Mode netMode);
+    ~ApplyAuthlibInjector() override;
 
    protected:
     void executeTask() override;
 
-   private slots:
-    void onRequestDone();
-
-   private:
-    AuthSessionPtr m_session;
-    MinecraftInstance* m_instance;
-    Net::Download::Ptr m_request;
-    NetJob::Ptr m_task;
+   protected slots:
+    void onMetaRequestDone(const Meta::VersionList::Ptr& versionList) override;
 };
