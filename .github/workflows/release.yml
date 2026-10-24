@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Existing tag to package and release
+        required: true
+        type: string
 
 permissions: { }
 
@@ -40,8 +46,7 @@ jobs:
         uses: actions/download-artifact@v8
       - name: Grab and store version
         run: |
-          tag_name=$(echo ${{ github.ref }} | grep -oE "[^/]+$")
-          echo "VERSION=$tag_name" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.release_tag || github.ref_name }}" >> "$GITHUB_ENV"
       - name: Package artifacts properly
         run: |
           mv ${{ github.workspace }}/ZengLauncher-source ZengLauncher-${{ env.VERSION }}
@@ -98,7 +103,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
           name: ZengLauncher ${{ env.VERSION }}
           draft: true
           prerelease: false
