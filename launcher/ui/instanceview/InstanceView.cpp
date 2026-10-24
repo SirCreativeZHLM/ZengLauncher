@@ -545,16 +545,12 @@ void InstanceView::onCurrentSnowChanged(bool visible)
  *
  * @param visible Whether a cat should be painted in the view.
  */
-void InstanceView::setPaintCat(bool visible)
+void InstanceView::setPaintCat([[maybe_unused]] bool visible)
 {
     if (m_cat) {
         disconnect(m_cat, &CatPainter::updateFrame, this, nullptr);
         delete m_cat;
         m_cat = nullptr;
-    }
-    if (visible) {
-        m_cat = new CatPainter(APPLICATION->themeManager()->getCatPack(), this);
-        connect(m_cat, &CatPainter::updateFrame, this, [this] { viewport()->update(); });
     }
 }
 

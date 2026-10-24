@@ -30,8 +30,8 @@
 #include "ui/themes/CatPack.h"
 #include "ui/themes/CustomTheme.h"
 #include "ui/themes/DarkTheme.h"
-#include "ui/themes/FreesmLightTheme.h"
-#include "ui/themes/FreesmTheme.h"
+#include "ui/themes/ZengLightTheme.h"
+#include "ui/themes/ZengTheme.h"
 #include "ui/themes/GruvboxTheme.h"
 #include "ui/themes/SystemTheme.h"
 
@@ -141,9 +141,9 @@ void ThemeManager::initializeWidgets()
     auto darkThemeId = addTheme(std::make_unique<DarkTheme>());
     themeDebugLog() << "Loading Built-in Theme:" << darkThemeId;
     themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<BrightTheme>());
-    themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<FreesmTheme>());
+    themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<ZengTheme>());
     themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<GruvboxTheme>());
-    themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<FreesmLightTheme>());
+    themeDebugLog() << "Loading Built-in Theme:" << addTheme(std::make_unique<ZengLightTheme>());
 
     themeDebugLog() << "<> Initializing System Widget Themes";
     QStringList styles = QStyleFactory::keys();

@@ -57,6 +57,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionAddInstance"/>
+   <addaction name="actionTransferContent"/>
    <addaction name="separator"/>
    <addaction name="actionFoldersButton"/>
    <addaction name="actionSettings"/>
@@ -295,10 +296,18 @@
     <iconset theme="new"/>
    </property>
    <property name="text">
-    <string>Add Instanc&amp;e...</string>
+    <string>Add &amp;version...</string>
    </property>
    <property name="toolTip">
     <string>Add a new instance.</string>
+   </property>
+  </action>
+  <action name="actionTransferContent">
+   <property name="text">
+    <string>Transfer mods &amp; worlds...</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy mods or worlds between Minecraft profiles. Existing files are skipped.</string>
    </property>
   </action>
   <action name="actionCheckUpdate">

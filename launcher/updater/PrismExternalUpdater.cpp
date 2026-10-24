@@ -57,7 +57,7 @@ PrismExternalUpdater::PrismExternalUpdater(QWidget* parent, const QString& appDi
 {
     priv->appDir = QDir(appDir);
     priv->dataDir = QDir(dataDir);
-    auto settingsFile = priv->dataDir.absoluteFilePath("prismlauncher_update.cfg");
+    auto settingsFile = priv->dataDir.absoluteFilePath("zenglauncher_update.cfg");
     priv->settings = std::make_unique<QSettings>(settingsFile, QSettings::Format::IniFormat);
     priv->allowBeta = priv->settings->value("allow_beta", false).toBool();
     priv->autoCheck = priv->settings->value("auto_check", true).toBool();

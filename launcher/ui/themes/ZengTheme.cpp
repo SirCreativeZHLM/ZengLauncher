@@ -32,67 +32,67 @@
  *      See the License for the specific language governing permissions and
  *      limitations under the License.
  */
-#include "FreesmTheme.h"
+#include "ZengTheme.h"
 
 #include <QObject>
 
-QString FreesmTheme::id()
+QString ZengTheme::id()
 {
-    return "freesm";
+    return "zeng";
 }
 
-QString FreesmTheme::name()
+QString ZengTheme::name()
 {
-    return QObject::tr("Freesm Dark");
+    return QObject::tr("Zeng Dark");
 }
 
-QPalette FreesmTheme::colorScheme()
+QPalette ZengTheme::colorScheme()
 {
     QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, QColor(30, 30, 46));
+    darkPalette.setColor(QPalette::Window, QColor(28, 28, 30));
     darkPalette.setColor(QPalette::WindowText, QColor(186, 194, 222));
-    darkPalette.setColor(QPalette::Base, QColor(24, 24, 37));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(30, 30, 46));
+    darkPalette.setColor(QPalette::Base, QColor(20, 20, 22));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(28, 28, 30));
     darkPalette.setColor(QPalette::ToolTipBase, QColor(222, 229, 252));
     darkPalette.setColor(QPalette::ToolTipText, QColor(222, 229, 252));
-    darkPalette.setColor(QPalette::Text, QColor(205, 214, 244));
-    darkPalette.setColor(QPalette::Button, QColor(49, 50, 68));
-    darkPalette.setColor(QPalette::ButtonText, QColor(205, 214, 244));
+    darkPalette.setColor(QPalette::Text, QColor(235, 235, 245));
+    darkPalette.setColor(QPalette::Button, QColor(44, 44, 46));
+    darkPalette.setColor(QPalette::ButtonText, QColor(235, 235, 245));
     darkPalette.setColor(QPalette::BrightText, QColor(186, 194, 222));
-    darkPalette.setColor(QPalette::Link, QColor(180, 190, 254));
-    darkPalette.setColor(QPalette::Highlight, QColor(180, 190, 254));
-    darkPalette.setColor(QPalette::HighlightedText, QColor(30, 30, 46));
+    darkPalette.setColor(QPalette::Link, QColor(10, 132, 255));
+    darkPalette.setColor(QPalette::Highlight, QColor(10, 132, 255));
+    darkPalette.setColor(QPalette::HighlightedText, QColor(28, 28, 30));
     darkPalette.setColor(QPalette::PlaceholderText, Qt::darkGray);
     return fadeInactive(darkPalette, fadeAmount(), fadeColor());
 }
 
-double FreesmTheme::fadeAmount()
+double ZengTheme::fadeAmount()
 {
     return 0.5;
 }
 
-QColor FreesmTheme::fadeColor()
+QColor ZengTheme::fadeColor()
 {
     return QColor(108, 112, 134);
 }
 
-bool FreesmTheme::hasStyleSheet()
+bool ZengTheme::hasStyleSheet()
 {
     return true;
 }
 
-QString FreesmTheme::appStyleSheet()
+QString ZengTheme::appStyleSheet()
 {
     return "QMainWindow, QDockWidget {background-color: #11111b;}QWidget {border-color: rgba(255, 255, 255, 8);font-family: \"Segoe UI "
            "Variable Text Semibold\", serif;border-radius: 4px;}QObject, QObject::separator, QObject::handle, QObject::tab-bar, "
            "QObject::tab, QObject::section {outline: 0;selection-color: #ffffff;border-radius: 2px;selection-background-color: rgba(203, "
            "166, 247, 200);alternate-background-color: transparent;}QObject::handle {margin: 2px;background: rgb(220, 203, "
-           "255);}QObject::handle:active {margin: 2px;background: rgba(203, 166, 247, 200);}QDialog, QWizard *, QCalendarWidget *, "
+           "255);}QObject::handle:active {margin: 2px;background: rgba(10, 132, 255, 200);}QDialog, QWizard *, QCalendarWidget *, "
            "#qswPages > QObject {background-color: #11111b;color: #ffffff;}QToolBar {background-color: transparent;spacing: 0;padding: "
            "8px;}QToolBar::separator {background: rgba(255, 255, 255, 20);height: 0;margin: 0;}QToolButton {background-color: rgba(255, "
            "255, 255, 0);border: 1px solid transparent;border-radius: 6px;padding: 2px;margin-left: 8px;}QToolButton[popupMode=\"1\"] "
-           "{padding-right: 20px;}QToolButton:on {background-color: rgba(205, 214, 244, 18);}QToolButton:hover {background-color: "
-           "rgba(203, 166, 247, 23);}QToolButton:pressed {background-color: rgba(205, 214, 244, 7);border: 1px solid rgba(205, 214, 244, "
+           "{padding-right: 20px;}QToolButton:on {background-color: rgba(235, 235, 245, 18);}QToolButton:hover {background-color: "
+           "rgba(10, 132, 255, 23);}QToolButton:pressed {background-color: rgba(235, 235, 245, 7);border: 1px solid rgba(235, 235, 245, "
            "8);color: #cdd6f4;}QToolButton::menu-indicator {image: url(:/icons/fluent_dark/resources/ComboBox.png);width: 32px;height: "
            "38px;}QToolButton::menu-arrow {image: url(:/icons/fluent_dark/resources/ComboBox.png);width: 20px;height: 100%;border-left: "
            "1px solid rgba(255, 255, "
@@ -102,14 +102,14 @@ QString FreesmTheme::appStyleSheet()
            "255, 255, 13);color: #c8c8c8;}QMenu {background-color: #11111b;padding-left: 1px;padding-top: 1px;border: 1px solid rgba(255, "
            "255, 255, 8);border-radius: 0px;}QMenu::indicator, QMenu::icon {left: 4px;}QMenu::item {background-color: transparent;padding: "
            "5px 15px;border-radius: 5px;min-width: 60px;margin: 3px;border: 1px solid transparent;}QMenu::item:selected {background-color: "
-           "rgba(203, 166, 247, 16);}QMenu::item:pressed {background-color: rgba(203, 166, 247, 8);border: 1px solid rgba(205, 214, 244, "
+           "rgba(10, 132, 255, 16);}QMenu::item:pressed {background-color: rgba(10, 132, 255, 8);border: 1px solid rgba(235, 235, 245, "
            "8);}QMenu::right-arrow {image: url(:/icons/fluent_dark/resources/TreeViewClose.png);min-width: 40px;min-height: "
            "18px;}QMenuBar:disabled {color: "
            "rgba(150, 150, 150);}QMenu::item:disabled {color: rgba(150, 150, 150);background-color: transparent;}QPushButton "
-           "{background-color: rgba(203, 166, 247, 18);border-radius: 5px;color: #ffffff;padding: 7px 20px;margin-right: 5px;border: 1px "
-           "solid transparent;}QPushButton:hover {background-color: rgba(203, 166, 247, 40);}QPushButton:pressed, "
+           "{background-color: rgba(10, 132, 255, 18);border-radius: 5px;color: #ffffff;padding: 7px 20px;margin-right: 5px;border: 1px "
+           "solid transparent;}QPushButton:hover {background-color: rgba(10, 132, 255, 40);}QPushButton:pressed, "
            "QPushButton:pressed:focus {background-color: rgba(255, 255, 255, 7);border: 1px solid rgba(255, 255, 255, 8);color: "
-           "#c8c8c8;border: 1px solid rgba(205, 214, 244, 8);}QPushButton:disabled {color: #aaaaaa;background-color: rgba(150, 150, 150, "
+           "#c8c8c8;border: 1px solid rgba(235, 235, 245, 8);}QPushButton:disabled {color: #aaaaaa;background-color: rgba(150, 150, 150, "
            "23);}QGroupBox {border-radius: 5px;border: 1px solid rgba(255, 255, 255, 3);margin-top: 24px;margin-bottom: "
            "4px;background-color: rgba(255, 255, 255, 5);}QGroupBox::title {subcontrol-origin: margin;subcontrol-position: top "
            "left;padding-bottom: 4px;padding-left: 4px;padding-right: 4px;border-bottom: 1px solid #cba6f7;}QGroupBox::title::disabled "
@@ -280,7 +280,7 @@ QString FreesmTheme::appStyleSheet()
            "15px;}QSizeGrip {height: 0px;width: 0px;}QToolTip {border: 1px solid #181825;color: white;padding: 2px;border-radius: "
            "3px;background: #181825;}QListView {padding: 5px;}";
 }
-QString FreesmTheme::tooltip()
+QString ZengTheme::tooltip()
 {
     return "";
 }

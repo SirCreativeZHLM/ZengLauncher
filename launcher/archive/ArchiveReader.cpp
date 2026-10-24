@@ -149,27 +149,35 @@ static bool willEscapeRoot(const QDir& root, archive_entry* entry)
     auto linkTarget = decodeLibArchivePath(entry, archive_entry_symlink_utf8, archive_entry_symlink);
     auto hardLink = decodeLibArchivePath(entry, archive_entry_hardlink_utf8, archive_entry_hardlink);
 
-    if (entryPath.isEmpty() || (linkTarget.isEmpty() && hardLink.isEmpty())) {
-        return false;
-    }
-
-    bool isHardLink = false;
-    if (isHardLink = linkTarget.isEmpty(); isHardLink) {
-        linkTarget = hardLink;
-    }
-
-    QString linkFullPath = root.filePath(entryPath);
-    auto rootDir = QUrl::fromLocalFile(root.absolutePath());
-
-    if (!rootDir.isParentOf(QUrl::fromLocalFile(linkFullPath))) {
+    if (entryPath.isEmpty()) {
         return true;
     }
 
-    QDir linkDir = QFileInfo(linkFullPath).dir();
-    if (!QDir::isAbsolutePath(linkTarget)) {
-        linkTarget = (!isHardLink ? linkDir : root).filePath(linkTarget);
+    // Disk extraction rejects archive links entirely. Even a link whose immediate
+    // target is inside root can be chained through another link to escape it.
+    if (!linkTarget.isEmpty() || !hardLink.isEmpty() || archive_entry_filetype(entry) == AE_IFLNK) {
+        return true;
     }
-    return !rootDir.isParentOf(QUrl::fromLocalFile(QDir::cleanPath(linkTarget)));
+
+    const QString rootPath = QDir::cleanPath(root.absolutePath());
+    const QString outputPath = QDir::cleanPath(entryPath);
+    const auto rootUrl = QUrl::fromLocalFile(rootPath);
+    const bool isRootDirectory = outputPath == rootPath && archive_entry_filetype(entry) == AE_IFDIR;
+    if (!isRootDirectory && !rootUrl.isParentOf(QUrl::fromLocalFile(outputPath))) {
+        return true;
+    }
+
+    // Prevent writing through a symlink already present in the destination tree.
+    const QString relativePath = root.relativeFilePath(outputPath);
+    QString currentPath = rootPath;
+    const auto parts = relativePath.split('/', Qt::SkipEmptyParts);
+    for (qsizetype i = 0; i < parts.size(); ++i) {
+        currentPath = QDir(currentPath).filePath(parts[i]);
+        if (QFileInfo(currentPath).isSymLink()) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool ArchiveReader::File::writeFile(archive* out, const QString& targetFileName, bool notBlock)

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>Maintainers - The Core Team Behind Freesm Launcher</h1>
+  <h1>Upstream Freesm Launcher Contributors</h1>
 </div>
 
 <div align="center">

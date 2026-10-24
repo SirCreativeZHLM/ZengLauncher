@@ -916,12 +916,12 @@ SET(LAUNCHER_SOURCES
     # GUI - themes
     ui/themes/FusionTheme.cpp
     ui/themes/FusionTheme.h
-    ui/themes/FreesmTheme.cpp
-    ui/themes/FreesmTheme.h
+    ui/themes/ZengTheme.cpp
+    ui/themes/ZengTheme.h
     ui/themes/GruvboxTheme.cpp
     ui/themes/GruvboxTheme.h
-    ui/themes/FreesmLightTheme.cpp
-    ui/themes/FreesmLightTheme.h
+    ui/themes/ZengLightTheme.cpp
+    ui/themes/ZengLightTheme.h
     ui/themes/BrightTheme.cpp
     ui/themes/BrightTheme.h
     ui/themes/CustomTheme.cpp
@@ -1127,6 +1127,8 @@ SET(LAUNCHER_SOURCES
     ui/dialogs/IconPickerDialog.h
     ui/dialogs/ImportResourceDialog.cpp
     ui/dialogs/ImportResourceDialog.h
+    ui/dialogs/TransferContentDialog.cpp
+    ui/dialogs/TransferContentDialog.h
     ui/dialogs/MSALoginDialog.cpp
     ui/dialogs/MSALoginDialog.h
     ui/dialogs/NetworkJobFailedDialog.cpp

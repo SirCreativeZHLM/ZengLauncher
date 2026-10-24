@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC0-1.0
 Fluent
 ---
 
-Microsoft Fluent Design inspired light theme for Freesm Launcher.
+Microsoft Fluent Design inspired light theme for ZengLauncher.
 
 License
 ---

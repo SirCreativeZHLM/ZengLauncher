@@ -8,6 +8,7 @@ permissions: { }
 
 jobs:
   winget:
+    if: github.repository == 'FreesmTeam/FreesmLauncher'
     name: Winget
 
     permissions:

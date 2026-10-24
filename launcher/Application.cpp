@@ -694,7 +694,14 @@ Application::Application(int& argc, char** argv) : QApplication(argc, argv)
 
         // Theming
         m_settings->registerSetting("IconTheme", QString("fluent_dark"));
-        m_settings->registerSetting("ApplicationTheme", QString("freesm"));
+        m_settings->registerSetting("ApplicationTheme", QString("zeng"));
+        // Migrate saved Freesm built-in theme IDs to their Zeng equivalents.
+        const auto savedTheme = m_settings->get("ApplicationTheme").toString();
+        if (savedTheme == "freesm") {
+            m_settings->set("ApplicationTheme", QString("zeng"));
+        } else if (savedTheme == "freesm-light") {
+            m_settings->set("ApplicationTheme", QString("zeng-light"));
+        }
         m_settings->registerSetting("BackgroundCat", QString("typescript"));
         m_settings->registerSetting("Snow", isWinter);
 
@@ -1303,7 +1310,7 @@ bool Application::createSetupWizard()
             const QString style =
                 QGuiApplication::styleHints()->colorScheme() == Qt::ColorScheme::Dark ? QStringLiteral("dark") : QStringLiteral("bright");
 #else
-            const QString style = QStringLiteral("freesm");
+            const QString style = QStringLiteral("zeng");
 #endif
 
             settings()->set("ApplicationTheme", style);

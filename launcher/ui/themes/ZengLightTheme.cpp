@@ -32,56 +32,56 @@
  *      See the License for the specific language governing permissions and
  *      limitations under the License.
  */
-#include "FreesmLightTheme.h"
+#include "ZengLightTheme.h"
 
 #include <QObject>
 
-QString FreesmLightTheme::id()
+QString ZengLightTheme::id()
 {
-    return "freesm-light";
+    return "zeng-light";
 }
 
-QString FreesmLightTheme::name()
+QString ZengLightTheme::name()
 {
-    return QObject::tr("Freesm Light");
+    return QObject::tr("Zeng Light");
 }
 
-QPalette FreesmLightTheme::colorScheme()
+QPalette ZengLightTheme::colorScheme()
 {
     QPalette darkPalette;
-    darkPalette.setColor(QPalette::Window, QColor(250, 244, 237));
-    darkPalette.setColor(QPalette::WindowText, QColor(87, 62, 62));
-    darkPalette.setColor(QPalette::Base, QColor(250, 244, 237));
-    darkPalette.setColor(QPalette::AlternateBase, QColor(250, 244, 237));
-    darkPalette.setColor(QPalette::ToolTipBase, QColor(169, 122, 122));
-    darkPalette.setColor(QPalette::ToolTipText, QColor(169, 122, 122));
-    darkPalette.setColor(QPalette::Text, QColor(23, 16, 16));
-    darkPalette.setColor(QPalette::Button, QColor(215, 130, 126));
-    darkPalette.setColor(QPalette::ButtonText, QColor(23, 16, 16));
-    darkPalette.setColor(QPalette::BrightText, QColor(87, 62, 62));
-    darkPalette.setColor(QPalette::Link, QColor(215, 130, 126));
-    darkPalette.setColor(QPalette::Highlight, QColor(215, 130, 126));
+    darkPalette.setColor(QPalette::Window, QColor(246, 246, 248));
+    darkPalette.setColor(QPalette::WindowText, QColor(28, 28, 30));
+    darkPalette.setColor(QPalette::Base, QColor(246, 246, 248));
+    darkPalette.setColor(QPalette::AlternateBase, QColor(246, 246, 248));
+    darkPalette.setColor(QPalette::ToolTipBase, QColor(60, 60, 67));
+    darkPalette.setColor(QPalette::ToolTipText, QColor(60, 60, 67));
+    darkPalette.setColor(QPalette::Text, QColor(28, 28, 30));
+    darkPalette.setColor(QPalette::Button, QColor(0, 122, 255));
+    darkPalette.setColor(QPalette::ButtonText, QColor(28, 28, 30));
+    darkPalette.setColor(QPalette::BrightText, QColor(28, 28, 30));
+    darkPalette.setColor(QPalette::Link, QColor(0, 122, 255));
+    darkPalette.setColor(QPalette::Highlight, QColor(0, 122, 255));
     darkPalette.setColor(QPalette::HighlightedText, QColor(206, 202, 205));
     darkPalette.setColor(QPalette::PlaceholderText, QColor(206, 202, 205));
     return fadeInactive(darkPalette, fadeAmount(), fadeColor());
 }
 
-double FreesmLightTheme::fadeAmount()
+double ZengLightTheme::fadeAmount()
 {
     return 0.5;
 }
 
-QColor FreesmLightTheme::fadeColor()
+QColor ZengLightTheme::fadeColor()
 {
     return QColor(255, 255, 255);
 }
 
-bool FreesmLightTheme::hasStyleSheet()
+bool ZengLightTheme::hasStyleSheet()
 {
     return true;
 }
 
-QString FreesmLightTheme::appStyleSheet()
+QString ZengLightTheme::appStyleSheet()
 {
     return "QMainWindow, QDockWidget {background-color: #ffffff;}QWidget {border-color: rgba(255, 255, 255, 8);font-family: \"Segoe UI "
            "Variable Text Semibold\", serif;border-radius: 4px;}QObject, QObject::separator, QObject::handle, QObject::tab-bar, "
@@ -285,7 +285,7 @@ QString FreesmLightTheme::appStyleSheet()
            "15px;}QSizeGrip {height: 0px;width: 0px;}QToolTip {border: 1px solid #ffffff;color: #000000;padding: 2px;border-radius: "
            "3px;background: #ffffff;}QListView {padding: 5px;}";
 }
-QString FreesmLightTheme::tooltip()
+QString ZengLightTheme::tooltip()
 {
     return "";
 }

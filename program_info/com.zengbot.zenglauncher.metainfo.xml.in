@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>@Launcher_AppID@</id>
+  <name>ZengLauncher</name>
+  <summary>A launcher for managing Minecraft installations, mods, and worlds</summary>
+  <developer id="com.zengbot"><name>ZengLauncher Contributors</name></developer>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  <description>
+    <p>ZengLauncher helps you install and manage Minecraft versions and isolated game instances.</p>
+    <ul>
+      <li>Install and manage Minecraft versions and mod loaders</li>
+      <li>Import modpacks, mods, and worlds into game instances</li>
+      <li>Configure Java and instance settings</li>
+    </ul>
+  </description>
+  <releases><release version="@Launcher_VERSION_NAME@" date="@Launcher_BUILD_TIMESTAMP@"/></releases>
+  <url type="homepage">https://zengbot.com/mc/</url>
+  <url type="help">https://zengbot.com/mc/#help</url>
+  <url type="bugtracker">https://zengbot.com/mc/#help</url>
+  <launchable type="desktop-id">@Launcher_AppID@.desktop</launchable>
+</component>

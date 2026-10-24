@@ -102,6 +102,7 @@
 #include "ui/dialogs/ExportPackDialog.h"
 #include "ui/dialogs/IconPickerDialog.h"
 #include "ui/dialogs/ImportResourceDialog.h"
+#include "ui/dialogs/TransferContentDialog.h"
 #include "ui/dialogs/NewInstanceDialog.h"
 #include "ui/dialogs/NewsDialog.h"
 #include "ui/dialogs/ProgressDialog.h"
@@ -925,6 +926,12 @@ void MainWindow::addInstance(const QString& url, const QMap<QString, QString>& e
 void MainWindow::on_actionAddInstance_triggered()
 {
     addInstance();
+}
+
+void MainWindow::on_actionTransferContent_triggered()
+{
+    TransferContentDialog dialog(this);
+    dialog.exec();
 }
 
 void MainWindow::processURLs(QList<QUrl> urls)

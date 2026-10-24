@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LAUNCHER_APPID="org.freesmlauncher.FreesmLauncher"
-LAUNCHER_APP_BINARY_NAME="freesmlauncher"
+LAUNCHER_APPID="com.zengbot.zenglauncher"
+LAUNCHER_APP_BINARY_NAME="zenglauncher"
 
 svg2png() {
     input_file="$1"

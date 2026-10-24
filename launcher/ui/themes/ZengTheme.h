@@ -36,9 +36,9 @@
 
 #include "FusionTheme.h"
 
-class FreesmLightTheme : public FusionTheme {
+class ZengTheme : public FusionTheme {
    public:
-    virtual ~FreesmLightTheme() {}
+    virtual ~ZengTheme() {}
 
     QString id() override;
     QString name() override;

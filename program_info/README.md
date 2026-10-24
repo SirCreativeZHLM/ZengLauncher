@@ -1,7 +1,5 @@
-# Freesm Launcher Program Info
+# ZengLauncher Program Info
 
-This is Freesm Launcher's program info which contains information about:
+This directory contains the platform metadata, icons, installer templates, and application resources used to build ZengLauncher.
 
-- Application name and logo (and branding in general)
-- Various URLs and API endpoints
-- Desktop file
+The launcher is based on Freesm Launcher and Prism Launcher. Their source files, licenses, and contributor notices remain in this repository.
