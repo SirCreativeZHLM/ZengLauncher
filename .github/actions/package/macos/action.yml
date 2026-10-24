@@ -73,7 +73,6 @@ runs:
         fi
 
         sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "ZengLauncher.app/Contents/MacOS/zenglauncher"
-        mv "ZengLauncher.app" "ZengLauncher.app"
 
     - name: Notarize
       shell: bash
