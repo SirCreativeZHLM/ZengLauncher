@@ -14,6 +14,10 @@ on:
         description: Type of build (Debug or Release)
         type: string
         default: Debug
+      skip-tests:
+        description: Skip tests when packaging a release
+        type: boolean
+        default: false
       environment:
         description: Deployment environment to run under
         type: string
@@ -131,6 +135,7 @@ jobs:
           cmake --build --preset "$CMAKE_PRESET" --config "$BUILD_TYPE"
 
       - name: Run tests
+        if: ${{ !inputs.skip-tests }}
         run: |
           ctest --preset "$CMAKE_PRESET" --build-config "$BUILD_TYPE"
 

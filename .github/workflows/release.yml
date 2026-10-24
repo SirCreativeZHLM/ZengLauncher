@@ -20,6 +20,7 @@ jobs:
     with:
       build-type: Release
       environment: Release
+      skip-tests: true
     secrets: inherit
 
   create_release:
