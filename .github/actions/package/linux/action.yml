@@ -94,9 +94,9 @@ runs:
         echo "ZENGLAUNCHER_DISABLE_GLVULKAN=1" >> "$INSTALL_APPIMAGE_DIR"/.env
         #makes the launcher use portals for file picking
         echo "QT_QPA_PLATFORMTHEME=xdgdesktopportal" >> "$INSTALL_APPIMAGE_DIR"/.env
-        ln -s org.zenglauncher.ZengLauncher.metainfo.xml "$INSTALL_APPIMAGE_DIR"/share/metainfo/org.zenglauncher.ZengLauncher.appdata.xml
-        ln -s share/applications/org.zenglauncher.ZengLauncher.desktop "$INSTALL_APPIMAGE_DIR"
-        ln -s share/icons/hicolor/256x256/apps/org.zenglauncher.ZengLauncher.png "$INSTALL_APPIMAGE_DIR"
+        ln -s com.zengbot.zenglauncher.metainfo.xml "$INSTALL_APPIMAGE_DIR"/share/metainfo/com.zengbot.zenglauncher.appdata.xml
+        ln -s share/applications/com.zengbot.zenglauncher.desktop "$INSTALL_APPIMAGE_DIR"
+        ln -s share/icons/hicolor/256x256/apps/com.zengbot.zenglauncher.png "$INSTALL_APPIMAGE_DIR"
         mv "$INSTALL_APPIMAGE_DIR"/{sharun,AppRun}
         ls -la "$INSTALL_APPIMAGE_DIR"
 
