@@ -14,8 +14,34 @@ on:
 permissions: { }
 
 jobs:
+  validate_macos_signing:
+    name: Validate macOS signing credentials
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require Developer ID and notarization credentials
+        env:
+          APPLE_CODESIGN_CERT: ${{ secrets.APPLE_CODESIGN_CERT }}
+          APPLE_CODESIGN_PASSWORD: ${{ secrets.APPLE_CODESIGN_PASSWORD }}
+          APPLE_CODESIGN_ID: ${{ secrets.APPLE_CODESIGN_ID }}
+          APPLE_NOTARIZE_APPLE_ID: ${{ secrets.APPLE_NOTARIZE_APPLE_ID }}
+          APPLE_NOTARIZE_TEAM_ID: ${{ secrets.APPLE_NOTARIZE_TEAM_ID }}
+          APPLE_NOTARIZE_PASSWORD: ${{ secrets.APPLE_NOTARIZE_PASSWORD }}
+        run: |
+          missing=0
+          for name in APPLE_CODESIGN_CERT APPLE_CODESIGN_PASSWORD APPLE_CODESIGN_ID APPLE_NOTARIZE_APPLE_ID APPLE_NOTARIZE_TEAM_ID APPLE_NOTARIZE_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Required GitHub Actions secret is missing: $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -ne 0 ]; then
+            echo "Add a Developer ID Application certificate and Apple notarization credentials before releasing macOS builds."
+            exit 1
+          fi
+
   build_release:
     name: Build Release
+    needs: validate_macos_signing
     uses: ./.github/workflows/build.yml
     permissions:
       contents: read

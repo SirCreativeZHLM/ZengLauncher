@@ -41,14 +41,18 @@ runs:
   steps:
     - name: Fetch codesign certificate
       shell: bash
+      env:
+        APPLE_CODESIGN_CERT: ${{ inputs.apple-codesign-cert }}
+        APPLE_CODESIGN_PASSWORD: ${{ inputs.apple-codesign-password }}
+        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
       run: |
-        echo '${{ inputs.apple-codesign-cert }}' | base64 --decode > codesign.p12
-        if [ -n '${{ inputs.apple-codesign-id }}' ]; then
-          security create-keychain -p '${{ inputs.apple-codesign-password }}' build.keychain
+        if [ -n "$APPLE_CODESIGN_ID" ]; then
+          printf '%s' "$APPLE_CODESIGN_CERT" | base64 --decode > codesign.p12
+          security create-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
           security default-keychain -s build.keychain
-          security unlock-keychain -p '${{ inputs.apple-codesign-password }}' build.keychain
-          security import codesign.p12 -k build.keychain -P '${{ inputs.apple-codesign-password }}' -T /usr/bin/codesign
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k '${{ inputs.apple-codesign-password }}' build.keychain
+          security unlock-keychain -p "$APPLE_CODESIGN_PASSWORD" build.keychain
+          security import codesign.p12 -k build.keychain -P "$APPLE_CODESIGN_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_CODESIGN_PASSWORD" build.keychain
         else
           echo ":warning: Using ad-hoc code signing for macOS, as certificate was not present." >> $GITHUB_STEP_SUMMARY
         fi
@@ -58,38 +62,47 @@ runs:
       env:
         BUILD_DIR: build
         INSTALL_DIR: install
+        APPLE_CODESIGN_ID: ${{ inputs.apple-codesign-id }}
       run: |
         cmake --install ${{ env.BUILD_DIR }} --config ${{ inputs.build-type }}
 
         cd ${{ env.INSTALL_DIR }}
-        chmod +x "ZengLauncher.app/Contents/MacOS/zenglauncher"
+        APP="ZengLauncher.app"
+        chmod +x "$APP/Contents/MacOS/zenglauncher"
+        ICON_FILE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$APP/Contents/Info.plist")
+        test -s "$APP/Contents/Resources/$ICON_FILE" || test -s "$APP/Contents/Resources/$ICON_FILE.icns"
 
-        if [ -n '${{ inputs.apple-codesign-id }}' ]; then
-          APPLE_CODESIGN_ID='${{ inputs.apple-codesign-id }}'
+        if [ -n "$APPLE_CODESIGN_ID" ]; then
           ENTITLEMENTS_FILE='../program_info/App.entitlements'
         else
-          APPLE_CODESIGN_ID='-'
           ENTITLEMENTS_FILE='../program_info/AdhocSignedApp.entitlements'
+          APPLE_CODESIGN_ID='-'
         fi
 
-        sudo codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "ZengLauncher.app/Contents/MacOS/zenglauncher"
+        codesign --sign "$APPLE_CODESIGN_ID" --deep --force --entitlements "$ENTITLEMENTS_FILE" --options runtime "$APP"
+        codesign --verify --deep --strict --verbose=2 "$APP"
 
     - name: Notarize
       shell: bash
       env:
         INSTALL_DIR: install
+        APPLE_NOTARIZE_APPLE_ID: ${{ inputs.apple-notarize-apple-id }}
+        APPLE_NOTARIZE_TEAM_ID: ${{ inputs.apple-notarize-team-id }}
+        APPLE_NOTARIZE_PASSWORD: ${{ inputs.apple-notarize-password }}
       run: |
         cd ${{ env.INSTALL_DIR }}
 
-        if [ -n '${{ inputs.apple-notarize-password }}' ]; then
+        if [ -n "$APPLE_NOTARIZE_PASSWORD" ]; then
           ditto -c -k --sequesterRsrc --keepParent "ZengLauncher.app" ../ZengLauncher.zip
           xcrun notarytool submit ../ZengLauncher.zip \
             --wait --progress \
-            --apple-id '${{ inputs.apple-notarize-apple-id }}' \
-            --team-id '${{ inputs.apple-notarize-team-id }}' \
-            --password '${{ inputs.apple-notarize-password }}'
+            --apple-id "$APPLE_NOTARIZE_APPLE_ID" \
+            --team-id "$APPLE_NOTARIZE_TEAM_ID" \
+            --password "$APPLE_NOTARIZE_PASSWORD"
 
           xcrun stapler staple "ZengLauncher.app"
+          xcrun stapler validate "ZengLauncher.app"
+          spctl --assess --type execute --verbose=2 "ZengLauncher.app"
         else
           echo ":warning: Skipping notarization as credentials are not present." >> $GITHUB_STEP_SUMMARY
         fi
