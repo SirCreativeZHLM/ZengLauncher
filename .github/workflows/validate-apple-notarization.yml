@@ -1,0 +1,32 @@
+name: Validate Apple notarization credentials
+
+on:
+  workflow_dispatch:
+
+permissions: { }
+
+jobs:
+  validate:
+    name: Authenticate with Apple notary service
+    runs-on: macos-26
+    timeout-minutes: 5
+    env:
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+    steps:
+      - name: Require notarization secrets
+        run: |
+          set -euo pipefail
+          : "${APPLE_ID:?APPLE_ID is missing}"
+          : "${APPLE_TEAM_ID:?APPLE_TEAM_ID is missing}"
+          : "${APPLE_APP_SPECIFIC_PASSWORD:?APPLE_APP_SPECIFIC_PASSWORD is missing}"
+      - name: Validate Apple credentials without building the app
+        run: |
+          set -euo pipefail
+          xcrun notarytool history \
+            --apple-id "$APPLE_ID" \
+            --team-id "$APPLE_TEAM_ID" \
+            --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+            --output-format json >/dev/null
+          echo "Apple notary credentials accepted."
