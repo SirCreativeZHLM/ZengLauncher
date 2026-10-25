@@ -21,18 +21,30 @@ on:
       environment:
         description: Deployment environment to run under
         type: string
+      platform:
+        description: Build all platforms or one platform
+        type: string
+        default: all
   workflow_dispatch:
     inputs:
       build-type:
         description: Type of build (Debug or Release)
         type: string
         default: Debug
+      platform:
+        description: Build all platforms or one platform
+        type: choice
+        options:
+          - all
+          - macOS
+        default: all
 
 permissions: { }
 
 jobs:
   build:
     name: Build (${{ matrix.artifact-name }})
+    if: ${{ inputs.platform == 'all' || inputs.platform == matrix.artifact-name }}
 
     environment: ${{ inputs.environment || '' }}
 

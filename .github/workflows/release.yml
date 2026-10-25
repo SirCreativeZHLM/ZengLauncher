@@ -10,6 +10,14 @@ on:
         description: Existing tag to package and release
         required: true
         type: string
+      platform:
+        description: Build all platforms or macOS only
+        required: true
+        type: choice
+        options:
+          - all
+          - macOS
+        default: all
 
 permissions: { }
 
@@ -53,9 +61,11 @@ jobs:
       build-type: Release
       environment: Release
       skip-tests: true
+      platform: ${{ inputs.platform || 'all' }}
     secrets: inherit
 
   create_release:
+    if: ${{ inputs.platform != 'macOS' }}
     needs: build_release
     permissions:
       contents: write
@@ -156,3 +166,38 @@ jobs:
             ZengLauncher-macOS-${{ env.VERSION }}.zip
             ZengLauncher-macOS-${{ env.VERSION }}.dmg
             ZengLauncher-${{ env.VERSION }}.tar.gz
+
+
+  create_release_macos:
+    if: ${{ inputs.platform == 'macOS' }}
+    needs: build_release
+    permissions:
+      contents: write
+    runs-on: ubuntu-slim
+    steps:
+      - name: Download macOS artifacts
+        uses: actions/download-artifact@v8
+      - name: Prepare macOS assets
+        env:
+          VERSION: ${{ inputs.release_tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          zip_files=(ZengLauncher-macOS-*/ZengLauncher.zip)
+          dmg_files=(ZengLauncher-macOS-*.dmg/ZengLauncher.dmg)
+          test "${#zip_files[@]}" -eq 1
+          test "${#dmg_files[@]}" -eq 1
+          cp "${zip_files[0]}" "ZengLauncher-macOS-${VERSION}.zip"
+          cp "${dmg_files[0]}" "ZengLauncher-macOS-${VERSION}.dmg"
+      - name: Create macOS-only draft release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          name: ZengLauncher ${{ inputs.release_tag || github.ref_name }}
+          draft: true
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            ZengLauncher-macOS-${{ inputs.release_tag || github.ref_name }}.zip
+            ZengLauncher-macOS-${{ inputs.release_tag || github.ref_name }}.dmg
