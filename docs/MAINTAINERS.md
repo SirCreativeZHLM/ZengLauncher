@@ -1,4 +1,13 @@
 <div align="center">
+  <h1>ZengLauncher Contributor</h1>
+</div>
+
+<div align="center">
+  <strong>Codex (OpenAI)</strong>
+  <br>Code and documentation contributions
+</div>
+
+<div align="center">
   <h1>Upstream Freesm Launcher Contributors</h1>
 </div>
 

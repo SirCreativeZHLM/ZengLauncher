@@ -44,7 +44,7 @@ Scope: focused source review of authentication, archive extraction, network beha
 
 ## Verification and scan evidence
 
-Artifact: `/tmp/FreesmLauncher-zenglauncher-rebrand/build/Debug/zenglauncher.app`; main executable is arm64 Mach-O. Bundle metadata is `com.zengbot.zenglauncher`, `ZengLauncher`, executable `zenglauncher`. `codesign --verify --deep --strict` succeeded after applying an ad-hoc signature. `spctl --assess --type execute --verbose=4` rejected the ad-hoc build (no Developer ID signature/notarization). Distribution requires signing and notarization.
+Artifact: the local Debug build; main executable is arm64 Mach-O. Bundle metadata is `com.zengbot.zenglauncher`, `ZengLauncher`, executable `zenglauncher`. `codesign --verify --deep --strict` succeeded after applying an ad-hoc signature. `spctl --assess --type execute --verbose=4` rejected the ad-hoc build (no Developer ID signature/notarization). Distribution requires signing and notarization.
 
 - Build: `JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home VCPKG_ROOT=/Users/zhlm/vcpkg cmake --fresh --preset macos`, then `cmake --build --preset macos --parallel` — completed successfully. The first link attempt caught a stale Qt resource initializer; it was corrected and the incremental build passed. No unit tests were run.
 - ClamAV: version 1.5.4; final scan at 2026-10-24 21:04:14–21:04:20 Asia/Singapore; scanned the `.app` recursively; 3 files, 102.49 MiB, 0 infected. Definitions: daily 28163 (built 2026-10-24 06:26 UTC), main 63, bytecode 339.
